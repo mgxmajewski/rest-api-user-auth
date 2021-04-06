@@ -5,6 +5,7 @@ const { User } = require('../models');
 
 // Middleware to authenticate the request using Basic Authentication.
 exports.authenticateUser = async (req, res, next) => {
+  let message; // store the message to display
   // Parse the user's credentials from the Authorization header.
   const credentials = auth(req);
   // If the user's credentials are available...
@@ -21,8 +22,14 @@ exports.authenticateUser = async (req, res, next) => {
 
         // Store the user on the Request object.
         req.currentUser = user;
+      } else {
+        message = `Authentication failure for username: ${user.username}`;
       }
+    } else {
+      message = `User not found for username: ${credentials.name}`;
     }
+  } else {
+    message = 'Auth header not found';
   }
 
   // If a user was successfully retrieved from the data store...
